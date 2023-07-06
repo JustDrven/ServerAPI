@@ -1,5 +1,7 @@
 package lib.firecraft.plugin;
 
+import lib.firecraft.customevents.PlayerJoin;
+import lib.firecraft.customevents.PlayerLeft;
 import lib.firecraft.player.PlayerManager;
 import lib.firecraft.plugin.interfaces.ServerSettings;
 import lib.firecraft.plugin.interfaces.ServerStatus;
@@ -14,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -172,6 +175,8 @@ public abstract class ServerAPI implements ServerSettings, Listener {
     public void JoinedMessage(PlayerJoinEvent e) {
         e.setJoinMessage(this.joinMessage);
 
+        this.getPlayerManager().add(e.getPlayer().getUniqueId());
+
         if (!(this.getServerStatus().equals(ServerStatus.WHITELIST))) {
             if (Bukkit.getOnlinePlayers().size() >= this.getMaxPlayers()) {
                 this.setServerStatus(ServerStatus.FULL);
@@ -179,12 +184,17 @@ public abstract class ServerAPI implements ServerSettings, Listener {
                 this.setServerStatus(ServerStatus.NORMAL);
             }
         }
+        Bukkit.getServer().getPluginManager().callEvent(new PlayerJoin(this.getPlayerManager().getFPlayer(e.getPlayer().getUniqueId()), this));
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void LeftedMessage(PlayerQuitEvent e) {
         e.setQuitMessage(this.leftMessage);
         if (!(this.getServerStatus().equals(ServerStatus.WHITELIST))) this.setServerStatus(ServerStatus.NORMAL);
+
+        Bukkit.getServer().getPluginManager().callEvent(new PlayerLeft(this.getPlayerManager().getFPlayer(e.getPlayer().getUniqueId()), this));
+
+        this.getPlayerManager().remove(e.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -195,5 +205,20 @@ public abstract class ServerAPI implements ServerSettings, Listener {
         if (this.getServerStatus().equals(ServerStatus.FULL)) {
             e.disallow(PlayerLoginEvent.Result.KICK_FULL, ChatColor.RED + "This server is full!");
         }
+    }
+
+    @EventHandler
+    public void CustomJoin(PlayerJoin e) {
+        this.onPlayerJoin(e);
+    }
+
+    @EventHandler
+    public void CustomLeft(PlayerLeft e) {
+        this.onPlayerLeft(e);
+    }
+
+    public void onPlayerJoin(PlayerJoin e){
+    }
+    public void onPlayerLeft(PlayerLeft e){
     }
 }

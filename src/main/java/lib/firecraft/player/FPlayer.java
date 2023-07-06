@@ -113,4 +113,9 @@ public final class FPlayer implements PlayerHandler {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }
