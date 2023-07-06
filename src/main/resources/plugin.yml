@@ -1,0 +1,4 @@
+name: ServerAPI
+version: '1.0.0'
+main: lib.firecraft.plugin.Main
+authors: [ JustDrven ]
