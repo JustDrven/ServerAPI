@@ -4,11 +4,10 @@ import lib.firecraft.player.PlayerManager;
 import lib.firecraft.plugin.interfaces.ServerSettings;
 import lib.firecraft.plugin.interfaces.ServerStatus;
 import lib.firecraft.plugin.utils.Colors;
-
 import lib.firecraft.world.WorldManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
